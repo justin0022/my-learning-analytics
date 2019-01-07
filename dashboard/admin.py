@@ -9,6 +9,15 @@ class CourseInline(admin.TabularInline):
 class CourseViewOptionInline(admin.StackedInline):
     model = CourseViewOption
 
+    exclude = ()
+
+    if not settings.ENABLE_FILES_ACCESSED:
+        exclude += ('show_files_accessed',)
+    if not settings.ENABLE_ASSIGNMENT_PLANNING:
+        exclude += ('show_assignment_planning',)
+    if not settings.ENABLE_GRADE_DISTRIBUTION:
+        exclude += ('show_grade_distribution',)
+
 class CourseAdmin(admin.ModelAdmin):
     inlines = [CourseViewOptionInline,]
 

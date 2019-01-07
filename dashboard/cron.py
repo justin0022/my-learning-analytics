@@ -407,8 +407,9 @@ class DashboardCronJob(CronJobBase):
 
 
         logger.info("************ file")
-        status += self.update_with_udw_file()
-        status += self.update_with_bq_access()
+        if settings.ENABLE_FILES_ACCESSED:
+            status += self.update_with_udw_file()
+            status += self.update_with_bq_access()
 
         logger.info("************ assignment")
         status += self.update_groups()

@@ -8,6 +8,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.conf import settings
 import logging
 logger = logging.getLogger(__name__)
 
@@ -178,9 +179,9 @@ class Course(models.Model):
 
 class CourseViewOption(models.Model):
     course = models.OneToOneField(Course, on_delete=models.CASCADE, primary_key=True, verbose_name="Course View Option Id")
-    show_files_accessed = models.BooleanField(blank=False, null=False, verbose_name="Show Files Accessed View")
-    show_assignment_planning = models.BooleanField(blank=False, null=False, verbose_name="Show Assignment Planning View")
-    show_grade_distribution = models.BooleanField(blank=False, null=False, verbose_name="Show Grade Distribution View")
+    show_files_accessed = models.BooleanField(blank=False, null=False, default=True, verbose_name="Show Files Accessed View")
+    show_assignment_planning = models.BooleanField(blank=False, null=False, default=True, verbose_name="Show Assignment Planning View")
+    show_grade_distribution = models.BooleanField(blank=False, null=False, default=True, verbose_name="Show Grade Distribution View")
 
     def __str__(self):
         return f"Course options for {self.course}"
@@ -199,9 +200,9 @@ class CourseViewOption(models.Model):
 
         return {
             self.course.canvas_id: {
-                'fa': int(self.show_files_accessed),
-                'ap': int(self.show_assignment_planning),
-                'gd': int(self.show_grade_distribution),
+                'fa': int(self.show_files_accessed and settings.ENABLE_FILES_ACCESSED),
+                'ap': int(self.show_assignment_planning and settings.ENABLE_ASSIGNMENT_PLANNING),
+                'gd': int(self.show_grade_distribution and settings.ENABLE_GRADE_DISTRIBUTION),
             }
         }
 

@@ -43,6 +43,16 @@ Environment variables:
 
 `LTI_CANVAS_COURSE_ID_FIELD`: LTI launch field containing the course's canvas id (default: `custom_canvas_course_id`).
 
+# Control course view options
+
+View options can be controlled at the global and course level.
+
+`ENABLE_FILES_ACCESSED` Globally control access to the files accessed view (default True).
+
+`ENABLE_ASSIGNMENT_PLANNING` Globally control access to the assignment planning view (default True).
+
+`ENABLE_GRADE_DISTRIBUTION` Globally control access to the grade distribution view (default True).
+
 # Docker commands for deploying the app
 1. Tear down running application and db instances:
 `docker-compose down`
