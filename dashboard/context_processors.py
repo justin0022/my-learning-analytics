@@ -35,6 +35,13 @@ def course_view_option(request):
 
     return {"course_view_option": course_view_option}
 
+def current_user_prefixed_course_id(request):
+    course_id = str(request.resolver_match.kwargs.get('course_id'))
+    if not course_id:
+        logger.info(f"Course ID could not be determined from request, attempting to look up for user {request.user.username}")
+        course_id = db_util.get_default_user_course_id(request.user.username)
+    prefixed_course_id = db_util.canvas_id_to_prefixed_id(course_id)
+    return {'current_user_prefixed_course_id': prefixed_course_id}
 
 def last_updated(request):
     return {'last_updated': db_util.get_canvas_data_date()}

@@ -184,7 +184,7 @@ class DashboardCronJob(CronJobBase):
 
         #select file record from DATA_WAREHOUSE
         for DATA_WAREHOUSE_course_id in Course.objects.get_supported_courses():
-            file_sql = f"""select concat({settings.DATA_WAREHOUSE_FILE_ID_PREFIX}, canvas_id) as ID, display_name as NAME, course_id as COURSE_ID from file_dim
+            file_sql = f"""select concat(substring({settings.DATA_WAREHOUSE_ID_TEMPLATE}, 1, len({settings.DATA_WAREHOUSE_ID_TEMPLATE}) - len(canvas_id)), canvas_id) as ID, display_name as NAME, course_id as COURSE_ID from file_dim
                         where file_state ='available'
                         and course_id='{DATA_WAREHOUSE_course_id}'
                         order by canvas_id

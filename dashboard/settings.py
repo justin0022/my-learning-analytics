@@ -105,6 +105,7 @@ TEMPLATES = [
                 'django_settings_export.settings_export',
                 'dashboard.context_processors.course_name',
                 'dashboard.context_processors.current_user_course_id',
+                'dashboard.context_processors.current_user_prefixed_course_id',
                 'dashboard.context_processors.course_view_option',
                 'dashboard.context_processors.last_updated',
                 'dashboard.context_processors.get_build_info',
@@ -343,10 +344,7 @@ if config('STUDENT_DASHBOARD_LTI', default='False', cast=bool):
 DATA_WAREHOUSE_IS_UNIZIN = config("DATA_WAREHOUSE_IS_UNIZIN", default=True, cast=bool)
 
 # This is fixed from DATA_WAREHOUSE
-DATA_WAREHOUSE_ID_PREFIX = config("DATA_WAREHOUSE_ID_PREFIX", default="17700000000", cast=str)
-
-# This is fixed from DATA_WAREHOUSE
-DATA_WAREHOUSE_FILE_ID_PREFIX = config("DATA_WAREHOUSE_FILE_ID_PREFIX", default="1770000000")
+DATA_WAREHOUSE_ID_TEMPLATE = config("DATA_WAREHOUSE_ID_TEMPLATE", default="17700000000000000", cast=str)
 
 # Allow enabling/disabling the View options globally
 ENABLE_FILES_ACCESSED = config('ENABLE_FILES_ACCESSED', default=True, cast=bool)
@@ -361,7 +359,7 @@ EARLIEST_TERM_DATE = config('EARLIEST_TERM_DATE', default='2016-11-15')
 RUN_AT_TIMES = config('RUN_AT_TIMES', default="", cast= Csv())
 
 # Add any settings you need to be available to templates in this array
-SETTINGS_EXPORT = ['LOGIN_URL','LOGOUT_URL','DEBUG', 'GA_ID', 'DATA_WAREHOUSE_ID_PREFIX']
+SETTINGS_EXPORT = ['LOGIN_URL','LOGOUT_URL','DEBUG', 'GA_ID']
 
 # Method to show the user, if they're authenticated and superuser
 def show_debug_toolbar(request):

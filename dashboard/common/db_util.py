@@ -2,6 +2,7 @@
 
 import django
 import logging
+import re
 from datetime import datetime
 from dateutil.parser import parse
 
@@ -12,6 +13,28 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
+def canvas_id_to_prefixed_id(canvas_id):
+    """
+    Insert the Canvas ID into the beginging of the DATA_WAREHOUSE_ID_TEMPLATE string
+    Ex: if DATA_WAREHOUSE_ID_TEMPLATE=11000000 and the Canvas ID = 999 then the prefixed_id will be 11000999
+    """
+    canvas_id = str(canvas_id)
+    prefixed_id = str(settings.DATA_WAREHOUSE_ID_TEMPLATE)[0:-len(canvas_id)] + canvas_id
+    return prefixed_id
+
+def prefixed_id_to_canvas_id(prefixed_id):
+    """
+    Remove the prefix from prefix_id to get the original Canvas ID
+    Ex: if the prefixed_id is 11000999 and DATA_WAREHOUSE_ID_TEMPLATE=11000000
+    then first remove the trailing zeros from DATA_WAREHOUSE_ID_TEMPLATE to get prefix `11`
+    then remove the prefix `11` from the prefixed_id getting `000999`
+    finally remove the leading zeros from `000999` getting `999` (the expected Canvas ID)
+    """
+    prefixed_id = str(prefixed_id)
+    prefix = re.sub('0+$', '', prefixed_id)
+    canvas_id = re.sub('^0+', '', prefixed_id.replace(prefix, ''))
+    return canvas_id
+
 def get_course_name_from_id(course_id):
     """[Get the long course name from the id]
 
@@ -21,7 +44,7 @@ def get_course_name_from_id(course_id):
     :rtype: [str]
     """
     logger.info(get_course_name_from_id.__name__)
-    course_id = settings.DATA_WAREHOUSE_ID_PREFIX + str(course_id)
+    course_id = canvas_id_to_prefixed_id(course_id)
     course_name = ""
     if (course_id):
         with django.db.connection.cursor() as cursor:
@@ -34,7 +57,7 @@ def get_course_name_from_id(course_id):
 def get_course_view_options (course_id):
 
     logger.info(get_course_view_options.__name__)
-    course_id = settings.DATA_WAREHOUSE_ID_PREFIX + str(course_id)
+    course_id = canvas_id_to_prefixed_id(course_id)
     logger.debug("course_id=" + str(course_id))
     course_view_option = ""
     if (course_id):
@@ -61,8 +84,7 @@ def get_default_user_course_id(user_id):
         cursor.execute("SELECT course_id FROM user WHERE sis_name= %s ORDER BY course_id DESC LIMIT 1", [user_id])
         row = cursor.fetchone()
         if (row != None):
-            #Remove the DATA_WAREHOUSE_ID_PREFIX and just return the course_id
-            course_id = str(row[0]).replace(settings.DATA_WAREHOUSE_ID_PREFIX, "")
+            course_id = canvas_id_to_prefixed_id(row[0])
     return course_id
 
 def get_last_cron_run():
