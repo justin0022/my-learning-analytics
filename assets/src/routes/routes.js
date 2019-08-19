@@ -25,6 +25,14 @@ const routes = (courseId, activeViews) => {
       description: 'See what resources you and your peers are viewing.',
       image: '/static/images/file_access_trends_icon.png',
       viewCode: 'fa'
+    },
+    {
+      path: `/courses/${courseId}/discussion`,
+      title: 'Discussion View',
+      icon: Grade,
+      description: 'See what resources you and your peers are viewing.',
+      image: '/static/images/file_access_trends_icon.png',
+      viewCode: 'ap'
     }
   ]
   return allViews.filter(view => activeViews[view.viewCode])
