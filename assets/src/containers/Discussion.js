@@ -7,6 +7,9 @@ import DiscussionCard from '../components/DiscussionCard'
 import DiscussionTab from '../components/DiscussionTab'
 import Error from './Error'
 import { isObjectEmpty } from '../util/object'
+import ApolloClient, { gql } from 'apollo-boost'
+import { createHttpLink } from 'apollo-link-http'
+import Cookie from 'js-cookie'
 
 const myMockData = [
   {
@@ -194,6 +197,22 @@ const styles = theme => ({
   }
 })
 
+// const link = createHttpLink({
+//   uri: '/graphql',
+//   headers: {
+//     'Accept': 'application/json',
+//     'X-Requested-With': 'XMLHttpRequest',
+//     'X-CSRFToken': Cookie.get('csrftoken')
+//   },
+//   credentials: 'include'
+// })
+
+const client = new ApolloClient({ headers: {
+  'Accept': 'application/json',
+  'X-Requested-With': 'XMLHttpRequest',
+  'X-CSRFToken': Cookie.get('csrftoken')
+} })
+
 function Discussion (props) {
   const { classes, disabled, courseId } = props
 
@@ -201,6 +220,21 @@ function Discussion (props) {
 
   const [myDataLoaded, myDataError, myDiscussionData] = [true, false, myMockData]
   const [classDataLoaded, classDataError, classDiscussionData] = [true, false, classMockData]
+
+  client.query({
+    query: gql`
+      {
+        course(courseId:112240000000004271) {
+          id,
+          name,
+          discussionTopics {
+            topicId,
+            courseId
+          }
+        }
+      }
+    `
+  }).then(x => console.log(x))
 
   if (myDataError || classDataError) return (<Error>Something went wrong, please try again later.</Error>)
   if ((myDataLoaded && isObjectEmpty(myDiscussionData)) ||
