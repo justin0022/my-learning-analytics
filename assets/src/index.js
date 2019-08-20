@@ -3,18 +3,9 @@ import ReactDOM from 'react-dom'
 import { BrowserRouter as Router } from 'react-router-dom'
 import './index.css'
 import App from './containers/App'
+import client from './service/client'
 import { ApolloProvider } from '@apollo/react-hooks'
-import ApolloClient from 'apollo-boost'
-import Cookie from 'js-cookie'
 // import * as serviceWorker from './serviceWorker'
-
-const client = new ApolloClient({
-  headers: {
-    'Accept': 'application/json',
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRFToken': Cookie.get('csrftoken')
-  }
-})
 
 ReactDOM.render(
   <Router basename='/'>

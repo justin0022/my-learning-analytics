@@ -196,22 +196,28 @@ const styles = theme => ({
   }
 })
 
-function Discussion (props) {
+function Discussion(props) {
   const { classes, disabled, courseId } = props
 
   if (disabled) return (<Error>Discussion view is hidden for this course.</Error>)
 
-  const [myDataLoaded, myDataError, myDiscussionData] = [true, false, myMockData]
-  const [classDataLoaded, classDataError, classDiscussionData] = [true, false, classMockData]
+  // const [myDataLoaded, myDataError, myDiscussionData] = [true, false, myMockData]
+  // const [classDataLoaded, classDataError, classDiscussionData] = [true, false, classMockData]
 
   const { loading, error, data } = useQuery(gql`
     {
-      course(courseId:112240000000004271) {
+      course(courseId:112240000000024693) {
         id,
         name,
         discussionTopics {
           topicId,
-          courseId
+          title
+        },
+        discussionMessages {
+          message,
+          topicId,
+          entryId,
+          userId
         }
       }
     }
@@ -219,26 +225,28 @@ function Discussion (props) {
 
   console.log(loading, error, data)
 
-  if (myDataError || classDataError) return (<Error>Something went wrong, please try again later.</Error>)
-  if ((myDataLoaded && isObjectEmpty(myDiscussionData)) ||
-    (classDataLoaded && isObjectEmpty(classDiscussionData))
-  ) return (<Error>No data provided.</Error>)
+  if (error) return (<Error>Something went wrong, please try again later.</Error>)
+  // if ((data && isObjectEmpty(data))) return (<Error>No data provided.</Error>)
 
-  const discussionGrid = (myDiscussionData, classDiscussionData) => {
+  const discussionGrid = data => {
     return (
       <Grid container spacing={16}>
         {
-          myDiscussionData.map((word, i) => (
-            <Grid item xs={3} key={i}>
-              <DiscussionCard keyword={word.keyword} coherence={word.coherence} >
-                <DiscussionTab
-                  myUsage={word.usage}
-                  myCoherence={word.coherence}
-                  classUsage={classDiscussionData[i].usage}
-                  classCoherence={classDiscussionData[i].coherence} />
-              </DiscussionCard>
-            </Grid>
-          ))
+          data.course.discussionTopics.map((x, i) => {
+            const myCoherence = Math.random()
+            const classCoherence = Math.random()
+            return (
+              <Grid item xs={3} key={i}>
+                <DiscussionCard keyword={x.title} coherence={myCoherence} >
+                  <DiscussionTab
+                    myUsage={data.course.discussionMessages.map(x => x.message).slice(0, 4)}
+                    myCoherence={myCoherence}
+                    classUsage={data.course.discussionMessages.map(x => x.message).slice(-4)}
+                    classCoherence={classCoherence} />
+                </DiscussionCard>
+              </Grid>
+            )
+          })
         }
       </Grid>
     )
@@ -250,9 +258,9 @@ function Discussion (props) {
         <Grid container spacing={40}>
           <Grid item xs={12} lg={12}>
             {
-              myDataLoaded && classDataLoaded
-                ? discussionGrid(myDiscussionData, classDiscussionData)
-                : <Spinner />
+              loading
+                ? <Spinner />
+                : discussionGrid(data)
             }
           </Grid>
         </Grid>
