@@ -196,7 +196,7 @@ const styles = theme => ({
   }
 })
 
-function Discussion(props) {
+function Discussion (props) {
   const { classes, disabled, courseId } = props
 
   if (disabled) return (<Error>Discussion view is hidden for this course.</Error>)
@@ -206,7 +206,7 @@ function Discussion(props) {
 
   const { loading, error, data } = useQuery(gql`
     {
-      course(courseId:112240000000024693) {
+      course(courseId:1122400000000${courseId}) {
         id,
         name,
         discussionTopics {
@@ -223,10 +223,7 @@ function Discussion(props) {
     }
   `)
 
-  console.log(loading, error, data)
-
   if (error) return (<Error>Something went wrong, please try again later.</Error>)
-  // if ((data && isObjectEmpty(data))) return (<Error>No data provided.</Error>)
 
   const discussionGrid = data => {
     return (
