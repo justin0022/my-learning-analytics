@@ -16,7 +16,6 @@ import { handleError, defaultFetchOptions } from '../util/data'
 import ResourceAccessChart from '../components/ResourceAccessChart'
 import Cookie from 'js-cookie'
 import Error from './Error'
-import { type } from 'os';
 
 const styles = theme => ({
   root: {
@@ -34,8 +33,8 @@ const styles = theme => ({
     justifyContent: 'center'
   },
   checkBox: {
-    marginLeft: 20,
-  },
+    marginLeft: 20
+  }
 })
 
 const currentSetting = 'My current setting'
@@ -66,27 +65,29 @@ function ResourcesAccessed (props) {
 
   const [dataLoaded, setDataLoaded] = useState(false)
 
-  function filterCheckox() {
+  function filterCheckbox () {
     if (resourceAccessData) {
       if (resourceTypes.length > 1) {
-        return(
-          <div style={{ textAlign: "center" }}>
+        return (
+          <div style={{ textAlign: 'center' }}>
             <FormControl>
               <FormGroup row>
-                <p style={{fontWeight: "bold"}}>Select Resources to be Viewed:</p>
+                <p style={{ fontWeight: 'bold' }}>Select Resources to be Viewed:</p>
                 {
-                  resourceTypes.map((el, i) => (<FormControlLabel key={i} control={<Checkbox color='primary' defaultChecked={true} onChange={onChangeResourceHandler} value={el}></Checkbox>} label={el}/>))
+                  resourceTypes.map((el, i) => (
+                    <FormControlLabel key={i} control={
+                      <Checkbox color='primary' defaultChecked onChange={onChangeResourceHandler} value={el} />
+                    } label={el} />))
                 }
               </FormGroup>
             </FormControl>
           </div>
         )
-      }
-      else if (resourceTypes.length === 1) {
-        let message = "You are viewing " + resourceTypes[0] + " data"
-        return(
-          <div style={{ textAlign: "center" }}>
-            <p style={{fontWeight: "bold"}}>{message}</p>
+      } else if (resourceTypes.length === 1) {
+        let message = 'You are viewing ' + resourceTypes[0] + ' data'
+        return (
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ fontWeight: 'bold' }}>{message}</p>
           </div>
         )
       }
@@ -121,9 +122,9 @@ function ResourcesAccessed (props) {
             return
           }
           setDefaultLabel(settingNotUpdated)
-        }).catch(err => {
-        setDefaultLabel(settingNotUpdated)
-      })
+        }).catch(_ => {
+          setDefaultLabel(settingNotUpdated)
+        })
     }
   }
 
@@ -174,11 +175,10 @@ function ResourcesAccessed (props) {
           setResourceAccessData(data)
           setDataLoaded(true)
         })
-        .catch(err => {
+        .catch(_ => {
           setResourceAccessData({})
         })
-    }
-    else {
+    } else {
       setResourceAccessData({})
     }
   }, [dataControllerLoad, weekRange, gradeRangeFilter, resourceFilter])
@@ -206,20 +206,18 @@ function ResourcesAccessed (props) {
     const value = event.target.value
     if (event.target.checked && !resourceFilter.includes(value)) {
       setResourceFilter([...resourceFilter, value])
-    } 
-    else if (!event.target.checked) { 
+    }
+    else if (!event.target.checked) {
       setResourceFilter(resourceFilter.filter(val => val !== value))
     }
   }
 
   const ResourceAccessChartBuilder = (resourceData) => {
     if (resourceFilter.length === 0) {
-      return (<div style={{textAlign: "center", fontWeight: "900", color:"#D8000C"}}><p>Please select a resource type to display data</p></div>)
-    }
-    else if (!resourceData || Object.keys(resourceData).length === 0) {
+      return (<div style={{ textAlign: 'center', fontWeight: '900', color: '#D8000C' }}><p>Please select a resource type to display data</p></div>)
+    } else if (!resourceData || Object.keys(resourceData).length === 0) {
       return (<p>No data provided</p>)
-    }
-    else {
+    } else {
       return (
         <Grid item xs={12} lg={10}>
           <ResourceAccessChart
@@ -236,10 +234,10 @@ function ResourcesAccessed (props) {
       <Grid container spacing={16}>
         <Grid item xs={12}>
           <Paper className={classes.paper}>
-            <Typography variant='h5' gutterBottom className="title">Resources Accessed</Typography>
-            {dataControllerLoad == 2 ? <RangeSlider
+            <Typography variant='h5' gutterBottom className='title'>Resources Accessed</Typography>
+            {dataControllerLoad === 2 ? <RangeSlider
               curWeek={curWeek}
-              className="slider"
+              className='slider'
               startWeek={weekRange[0]}
               endWeek={weekRange[1]}
               min={minMaxWeek[0]}
@@ -256,28 +254,28 @@ function ResourcesAccessed (props) {
                   onChange={onChangeGradeRangeHandler}
                   inputProps={{
                     name: 'grade',
-                    id: 'grade-range',
+                    id: 'grade-range'
                   }}
                 >
-                  <MenuItem value="All">All</MenuItem>
-                  <MenuItem value="90-100">90-100%</MenuItem>
-                  <MenuItem value="80-89">80-89%</MenuItem>
-                  <MenuItem value="70-79">70-79%</MenuItem>
+                  <MenuItem value='All'>All</MenuItem>
+                  <MenuItem value='90-100'>90-100%</MenuItem>
+                  <MenuItem value='80-89'>80-89%</MenuItem>
+                  <MenuItem value='70-79'>70-79%</MenuItem>
                 </Select>
               </FormControl>
-              {defaultCheckboxState ? <div style={{ padding: '10px' }}></div> : <Checkbox
+              {defaultCheckboxState ? <div style={{ padding: '10px' }} /> : <Checkbox
                 checked={defaultCheckboxState}
                 onChange={changeDefaultSetting}
-                value="checked"
+                value='checked'
               />}
               <div style={{ padding: '15px 2px' }}>{defaultLabel}</div>
             </div>
             {
-              filterCheckox()
+              filterCheckbox()
             }
             {(resourceAccessData && dataLoaded) || resourceFilter.length === 0
               ? ResourceAccessChartBuilder(resourceAccessData)
-              : <Spinner/>}
+              : <Spinner />}
           </Paper>
         </Grid>
       </Grid>
