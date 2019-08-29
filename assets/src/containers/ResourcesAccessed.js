@@ -11,7 +11,7 @@ import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
-import { useUserSettingData } from '../service/api'
+import { useUserSettingData, useResourcesData } from '../service/api'
 import { handleError, defaultFetchOptions } from '../util/data'
 import ResourceAccessChart from '../components/ResourceAccessChart'
 import Cookie from 'js-cookie'
@@ -52,7 +52,7 @@ function ResourcesAccessed (props) {
     : courseInfo.resource_types
 
   const [userSettingLoaded, userSetting] = useUserSetting(courseId, 'resource')
-  const [loaded, error, resourcesDefaultData] = useUserSettingData(courseId, 'resource') // Used to update default setting
+  // const [loaded, error, resourcesDefaultData] = useUserSettingData(courseId, 'resource') // Used to update default setting
 
   const [minMaxWeek, setMinMaxWeek] = useState([]) // Should be updated from info
   const [curWeek, setCurWeek] = useState(0) // Should be updated from info
