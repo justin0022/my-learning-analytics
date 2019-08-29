@@ -16,6 +16,8 @@ import { handleError, defaultFetchOptions } from '../util/data'
 import ResourceAccessChart from '../components/ResourceAccessChart'
 import Cookie from 'js-cookie'
 import Error from './Error'
+import useUserSetting from '../hooks/useUserSetting'
+import { isObjectEmpty } from '../util/object'
 
 const styles = theme => ({
   root: {
@@ -44,11 +46,14 @@ const settingNotUpdated = 'Setting not updated'
 function ResourcesAccessed (props) {
   const { classes, courseInfo, courseId, disabled } = props
   if (disabled) return (<Error>Files view is hidden for this course.</Error>)
-  let resourceTypes = courseInfo.resource_types
-  if (resourceTypes.length === 0) {
-    resourceTypes = ['Files']
-  }
+
+  const resourceTypes = courseInfo.resource_types.length === 0
+    ? ['Files']
+    : courseInfo.resource_types
+
+  const [userSettingLoaded, userSetting] = useUserSetting(courseId, 'resource')
   const [loaded, error, resourcesDefaultData] = useUserSettingData(courseId, 'resource') // Used to update default setting
+
   const [minMaxWeek, setMinMaxWeek] = useState([]) // Should be updated from info
   const [curWeek, setCurWeek] = useState(0) // Should be updated from info
   const [weekRange, setWeekRange] = useState([]) // Should be depend on curWeek
@@ -64,6 +69,20 @@ function ResourcesAccessed (props) {
   const [defaultLabel, setDefaultLabel] = useState(currentSetting)
 
   const [dataLoaded, setDataLoaded] = useState(false)
+
+  useEffect(() => {
+    if (userSettingLoaded) {
+      console.log(userSetting)
+      if (isObjectEmpty(userSetting.default)) {
+        setGradeRangeFilter('All')
+        setDefaultValue('All')
+      } else {
+        setGradeRangeFilter(userSetting.default)
+        setDefaultValue(userSetting.default)
+      }
+      setDataControllerLoad(dataControllerLoad + 1)
+    }
+  }, [userSettingLoaded])
 
   function filterCheckbox () {
     if (resourceAccessData) {
@@ -148,20 +167,20 @@ function ResourcesAccessed (props) {
     }
   }, [courseInfo])
 
-  useEffect(() => {
-    // Fetch grade range from default setting if any
-    if (loaded) {
-      if (resourcesDefaultData.default !== '') {
-        setGradeRangeFilter(resourcesDefaultData.default)
-        setDefaultValue(resourcesDefaultData.default)
-      } else {
-        // setting it to default
-        setGradeRangeFilter('All')
-        setDefaultValue('All')
-      }
-      setDataControllerLoad(dataControllerLoad + 1)
-    }
-  }, [loaded])
+  // useEffect(() => {
+  //   // Fetch grade range from default setting if any
+  //   if (loaded) {
+  //     if (resourcesDefaultData.default !== '') {
+  //       setGradeRangeFilter(resourcesDefaultData.default)
+  //       setDefaultValue(resourcesDefaultData.default)
+  //     } else {
+  //       // setting it to default
+  //       setGradeRangeFilter('All')
+  //       setDefaultValue('All')
+  //     }
+  //     setDataControllerLoad(dataControllerLoad + 1)
+  //   }
+  // }, [loaded])
 
   useEffect(() => {
     // Fetch data once all the setting data is fetched
