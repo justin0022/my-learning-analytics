@@ -47,6 +47,8 @@ function ResourcesAccessed (props) {
   const { classes, courseInfo, courseId, disabled } = props
   if (disabled) return (<Error>Files view is hidden for this course.</Error>)
 
+  console.log(courseInfo)
+
   const resourceTypes = courseInfo.resource_types.length === 0
     ? ['Files']
     : courseInfo.resource_types
@@ -103,7 +105,7 @@ function ResourcesAccessed (props) {
           </div>
         )
       } else if (resourceTypes.length === 1) {
-        let message = 'You are viewing ' + resourceTypes[0] + ' data'
+        const message = 'You are viewing ' + resourceTypes[0] + ' data'
         return (
           <div style={{ textAlign: 'center' }}>
             <p style={{ fontWeight: 'bold' }}>{message}</p>
@@ -202,10 +204,7 @@ function ResourcesAccessed (props) {
     }
   }, [dataControllerLoad, weekRange, gradeRangeFilter, resourceFilter])
 
-  const onWeekChangeHandler = value => {
-    // Update week range slider
-    setWeekRange(value)
-  }
+  const onWeekChangeHandler = value => setWeekRange(value)
 
   const onChangeGradeRangeHandler = event => {
     // Update grade range selection
@@ -225,8 +224,7 @@ function ResourcesAccessed (props) {
     const value = event.target.value
     if (event.target.checked && !resourceFilter.includes(value)) {
       setResourceFilter([...resourceFilter, value])
-    }
-    else if (!event.target.checked) {
+    } else if (!event.target.checked) {
       setResourceFilter(resourceFilter.filter(val => val !== value))
     }
   }
@@ -247,26 +245,30 @@ function ResourcesAccessed (props) {
       )
     }
   }
-  if (error) return (<Error>Something went wrong, please try again later.</Error>)
+  // if (error) return (<Error>Something went wrong, please try again later.</Error>)
   return (
     <div className={classes.root}>
       <Grid container spacing={16}>
         <Grid item xs={12}>
           <Paper className={classes.paper}>
             <Typography variant='h5' gutterBottom className='title'>Resources Accessed</Typography>
-            {dataControllerLoad === 2 ? <RangeSlider
-              curWeek={curWeek}
-              className='slider'
-              startWeek={weekRange[0]}
-              endWeek={weekRange[1]}
-              min={minMaxWeek[0]}
-              max={minMaxWeek[1]}
-              onWeekChange={onWeekChangeHandler}
-            /> : ''}
+            {dataControllerLoad === 2
+              ? (
+                <RangeSlider
+                  curWeek={curWeek}
+                  className='slider'
+                  startWeek={weekRange[0]}
+                  endWeek={weekRange[1]}
+                  min={minMaxWeek[0]}
+                  max={minMaxWeek[1]}
+                  onWeekChange={onWeekChangeHandler}
+                />
+              ) : ''}
             <div className={classes.formController}>
               <p>Resources accessed from
                 week <b>{weekRange[0]} {weekRange[0] === curWeek ? ' (Now)' : ''}</b> to <b>{weekRange[1]}{weekRange[1] === curWeek ? ' (Now)' : ''}</b> with
-                these grades: </p>
+                these grades:
+              </p>
               <FormControl className={classes.formControl}>
                 <Select
                   value={gradeRangeFilter}
@@ -282,11 +284,14 @@ function ResourcesAccessed (props) {
                   <MenuItem value='70-79'>70-79%</MenuItem>
                 </Select>
               </FormControl>
-              {defaultCheckboxState ? <div style={{ padding: '10px' }} /> : <Checkbox
-                checked={defaultCheckboxState}
-                onChange={changeDefaultSetting}
-                value='checked'
-              />}
+              {defaultCheckboxState
+                ? <div style={{ padding: '10px' }} />
+                : (
+                  <Checkbox
+                    checked={defaultCheckboxState}
+                    onChange={changeDefaultSetting}
+                    value='checked'
+                  />)}
               <div style={{ padding: '15px 2px' }}>{defaultLabel}</div>
             </div>
             {
