@@ -50,11 +50,13 @@ const assignmentTable = assignmentData => {
   if (!assignmentData || Object.keys(assignmentData).length === 0) {
     return (<Typography>No data provided</Typography>)
   }
-  return <TableAssignment
-    tableHead={['Week', 'Due', 'Title', 'Percent of final grade']}
-    tableData={assignmentData}
-    currentWeek={getCurrentWeek(assignmentData)}
-  />
+  return (
+    <TableAssignment
+      tableHead={['Week', 'Due', 'Title', 'Percent of final grade']}
+      tableData={assignmentData}
+      currentWeek={getCurrentWeek(assignmentData)}
+    />
+  )
 }
 
 function AssignmentPlanning (props) {
@@ -69,7 +71,11 @@ function AssignmentPlanning (props) {
   // this is the filter setting last saved by the user
   const [userSavedFilterSetting, setUserSavedFilterSetting] = useState(assignmentGradeFilter)
   const [userSettingLoaded, userSetting] = useUserSetting(courseId, 'assignment')
-  const [assignmentLoaded, assignmentError, assignmentData] = useAssignmentData(courseId, assignmentGradeFilter, !userSettingLoaded)
+  const [
+    assignmentLoaded,
+    assignmentError,
+    assignmentData
+  ] = useAssignmentData(courseId, assignmentGradeFilter, !userSettingLoaded)
   const [saveLabel, setSaveLabel] = useState(currentSetting)
 
   const [userSettingSaved, savingError, userSettingResponse] = useSetUserSetting(
@@ -132,10 +138,13 @@ function AssignmentPlanning (props) {
             <>
               <Typography variant='h5' gutterBottom>Progress toward Final Grade</Typography>
               {assignmentData
-                ? <ProgressBar
-                  data={assignmentData.progress}
-                  aspectRatio={0.12}
-                  tip={AssignmentPlanningTooltip(classes)} />
+                ? (
+                  <ProgressBar
+                    data={assignmentData.progress}
+                    aspectRatio={0.12}
+                    tip={AssignmentPlanningTooltip(classes)}
+                  />
+                )
                 : <Spinner />}
             </ >
           </Paper>
@@ -172,22 +181,23 @@ function AssignmentPlanning (props) {
                   <MenuItem value={75}>75%</MenuItem>
                 </Select>
                 {showSaveSetting
-                  ? <Checkbox
-                    checked={saveSettingClicked}
-                    onChange={() => setSaveSettingClicked(!saveSettingClicked)}
-                    value='checked'
-                    color='primary'
-                  />
-                  : null
-                }
+                  ? (
+                    <Checkbox
+                      checked={saveSettingClicked}
+                      onChange={() => setSaveSettingClicked(!saveSettingClicked)}
+                      value='checked'
+                      color='primary'
+                    />
+                  )
+                  : null}
                 <div style={{ padding: '15px 2px' }}>{saveLabel}</div>
               </div>
             </FormControl>
             <UserSettingSnackbar
               saved={userSettingSaved}
               response={userSettingResponse}
-              successMessage={'Assignment filter setting saved!'} />
-            { /* in case of no data empty list is sent */}
+              successMessage='Assignment filter setting saved!'
+            />
             {assignmentLoaded ? assignmentTable(assignmentData.plan) : <Spinner />}
           </Paper>
         </Grid>
