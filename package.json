@@ -6,7 +6,8 @@
     "d3": "^5.9.4",
     "d3-tip": "~0.9.1",
     "jquery": ">=3.4.0",
-    "rc-slider": "^8.6.13"
+    "rc-slider": "^8.6.13",
+    "standard": "^14.1.0"
   },
   "babel": {
     "presets": [
