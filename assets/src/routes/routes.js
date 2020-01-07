@@ -25,6 +25,14 @@ const routes = (courseId, activeViews) => {
       description: 'See where your grade sits within the course grade distribution.',
       image: '/static/images/grade_distribution_icon.png',
       viewCode: 'gd'
+    },
+    {
+      path: `/courses/${courseId}/gradecorrelation`,
+      title: 'Grade Correlation',
+      icon: Grade,
+      description: 'See the correlation of grades between different assignments.',
+      image: '/static/images/grade_distribution_icon.png',
+      viewCode: 'gd'
     }
   ]
   return allViews.filter(view => activeViews[view.viewCode])

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, withRouter } from 'react-router-dom' //
 import DashboardAppBar from './DashboardAppBar'
 import SideDrawer from './SideDrawer'
 import GradeDistribution from './GradeDistribution'
+import GradeCorrelation from './GradeCorrelation'
 import AssignmentPlanning from './AssignmentPlanning'
 import ResourcesAccessed from './ResourcesAccessed'
 import IndexPage from './IndexPage'
@@ -82,6 +83,18 @@ function Course (props) {
                     <ResourcesAccessed
                       {...props}
                       disabled={!courseInfo.course_view_options.ra}
+                      courseInfo={courseInfo}
+                      courseId={courseId}
+                    />
+                }
+              />
+              <Route
+                path='/courses/:courseId/gradecorrelation'
+                render={
+                  props =>
+                    <GradeCorrelation
+                      {...props}
+                      disabled={!courseInfo.course_view_options.gd}
                       courseInfo={courseInfo}
                       courseId={courseId}
                     />
