@@ -89,7 +89,7 @@ function Course (props) {
                 }
               />
               <Route
-                path='/courses/:courseId/gradecorrelation'
+                path='/courses/:courseId/grade-correlation'
                 render={
                   props =>
                     <GradeCorrelation

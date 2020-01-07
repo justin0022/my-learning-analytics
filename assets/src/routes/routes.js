@@ -27,7 +27,7 @@ const routes = (courseId, activeViews) => {
       viewCode: 'gd'
     },
     {
-      path: `/courses/${courseId}/gradecorrelation`,
+      path: `/courses/${courseId}/grade-correlation`,
       title: 'Grade Correlation',
       icon: Grade,
       description: 'See the correlation of grades between different assignments.',

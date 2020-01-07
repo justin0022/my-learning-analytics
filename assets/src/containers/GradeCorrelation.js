@@ -20,6 +20,59 @@ const styles = theme => ({
   }
 })
 
+const data = {
+  data: {
+    course: {
+      assignments: [
+        {
+          id: '17700000000447605',
+          name: 'Random assignment 1',
+          pointsPossible: 50,
+          currentSubmissions: [
+            {
+              userId: '17700000000475149',
+              name: 'Robert Thompson',
+              score: 30
+            },
+            {
+              userId: '17700000000609566',
+              name: 'Allison Montgomery',
+              score: 45
+            },
+            {
+              userId: '17700000000623036',
+              name: 'Samuel Buchanan',
+              score: 25
+            }
+          ]
+        },
+        {
+          id: '17700000000447675',
+          name: 'Random assignment 2',
+          pointsPossible: 70,
+          currentSubmissions: [
+            {
+              userId: '17700000000475149',
+              name: 'Robert Thompson',
+              score: 65
+            },
+            {
+              userId: '17700000000609566',
+              name: 'Allison Montgomery',
+              score: 54
+            },
+            {
+              userId: '17700000000623036',
+              name: 'Samuel Buchanan',
+              score: 47
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+
 function GradeCorrelation (props) {
   const { classes, disabled, courseId } = props
   if (disabled) return (<AlertBanner>The Grade Correlation view is hidden for this course.</AlertBanner>)
