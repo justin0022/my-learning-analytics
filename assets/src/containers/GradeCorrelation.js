@@ -72,11 +72,35 @@ const data = {
               score: 47
             }
           ]
+        },
+        {
+          id: '17700000000447676',
+          name: 'Random assignment 3',
+          pointsPossible: 70,
+          currentSubmissions: [
+            {
+              userId: '17700000000475149',
+              name: 'Robert Thompson',
+              score: 65
+            },
+            {
+              userId: '17700000000609566',
+              name: 'Allison Montgomery',
+              score: 54
+            },
+            {
+              userId: '17700000000623036',
+              name: 'Samuel Buchanan',
+              score: 47
+            }
+          ]
         }
       ]
     }
   }
 }
+
+const getAssignmentById = (assignments, id) => assignments.filter(a => a.id === id)
 
 function GradeCorrelation (props) {
   const { classes, disabled, courseId } = props
@@ -84,11 +108,27 @@ function GradeCorrelation (props) {
   const assignments = data.data.course.assignments.map(a => ({ name: a.name, id: a.id }))
   const scatterplotData = data.data.course.assignments.map(a => a.currentSubmissions.map(({ score }) => score))
 
-  console.log(scatterplotData)
+  // console.log(scatterplotData)
 
-  const [xAxisAssignment, setXAxisAssignment] = useState(assignments[0].name)
-  const [yAxisAssignment, setYAxisAssignment] = useState(assignments[1].name)
+  const [xAxisAssignmentId, setXAxisAssignmentId] = useState(assignments[0].id)
+  const [yAxisAssignmentId, setYAxisAssignmentId] = useState(assignments[1].id)
 
+  const [xAxisAssignment, setXAxisAssignment] = useState(null)
+  const [yAxisAssignment, setYAxisAssignment] = useState(null)
+
+  useEffect(() => {
+    setXAxisAssignment(
+      getAssignmentById(data.data.course.assignments, xAxisAssignmentId)
+    )
+  }, [xAxisAssignmentId])
+
+  useEffect(() => {
+    setYAxisAssignment(
+      getAssignmentById(data.data.course.assignments, yAxisAssignmentId)
+    )
+  }, [yAxisAssignmentId])
+
+  console.log(xAxisAssignment, yAxisAssignment)
 
   return (
     <div className={classes.root}>
@@ -99,29 +139,23 @@ function GradeCorrelation (props) {
             <FormControl className={classes.formControl}>
               <InputLabel>Select Assignment</InputLabel>
               <Select
-                value={yAxisAssignment}
-                onChange={event => setYAxisAssignment(event.target.value)}
+                value={xAxisAssignmentId}
+                onChange={event => setXAxisAssignmentId(event.target.value)}
               >
-                {/* <MenuItem value={'Assignment 1'}>Assignment 1</MenuItem>
-                <MenuItem value={'Assignment 2'}>Assignment 2</MenuItem>
-                <MenuItem value={'Midterm 1'}>Midterm 1</MenuItem>
-                <MenuItem value={'Midterm 2'}>Midterm 2</MenuItem>
-                <MenuItem value={'Final Exam'}>Final Exam</MenuItem>
-                <MenuItem value={'Final Grade in Course'}>Final Grade in Course</MenuItem> */}
+                {assignments.map((a, i) => (
+                  <MenuItem value={a.id} key={i}>{a.name}</MenuItem>
+                ))}
               </Select>
             </FormControl>
             <FormControl className={classes.formControl}>
               <InputLabel>Select Assignment</InputLabel>
               <Select
-                value={xAxisAssignment}
-                onChange={event => setXAxisAssignment(event.target.value)}
+                value={yAxisAssignmentId}
+                onChange={event => setYAxisAssignmentId(event.target.value)}
               >
-                {/* <MenuItem value={'Assignment 1'}>Assignment 1</MenuItem>
-                <MenuItem value={'Assignment 2'}>Assignment 2</MenuItem>
-                <MenuItem value={'Midterm 1'}>Midterm 1</MenuItem>
-                <MenuItem value={'Midterm 2'}>Midterm 2</MenuItem>
-                <MenuItem value={'Final Exam'}>Final Exam</MenuItem>
-                <MenuItem value={'Final Grade in Course'}>Final Grade in Course</MenuItem> */}
+                {assignments.map((a, i) => (
+                  <MenuItem value={a.id} key={i}>{a.name}</MenuItem>
+                ))}
               </Select>
             </FormControl>
             {/* <Scatterplot
