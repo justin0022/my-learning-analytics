@@ -24,10 +24,10 @@ import SubmittedIcon from '@material-ui/icons/Textsms'
 import ProgressBarV2 from './ProgressBarV2'
 import PopupMessage from './PopupMessage'
 import ConditionalWrapper from './ConditionalWrapper'
-import StyledTextField from './StyledTextField'
 import AlertBanner from '../components/AlertBanner'
+import AssignmentGoalInput from '../components/AssignmentGoalInput/AssignmentGoalInput'
 import { calculateWeekOffset } from '../util/date'
-import { roundToXDecimals, getDecimalPlaceOfFloat } from '../util/math'
+import { roundToXDecimals } from '../util/math'
 import { assignmentStatus } from '../util/assignment'
 
 const headerHeight = 105
@@ -46,11 +46,6 @@ const styles = theme => ({
   },
   sliderCell: {
     minWidth: '150px'
-  },
-  goalGradeInput: {
-    marginTop: 0,
-    width: 100,
-    marginBottom: '10px'
   },
   tableCell: {
     border: 'none'
@@ -173,10 +168,6 @@ function AssignmentTable (props) {
       : false
   }
 
-  // Use decimal place of pointsPossible if it's a decimal; otherwise, round to nearest tenth
-  const placeToRoundTo = pointsPossible => (String(pointsPossible).includes('.'))
-    ? getDecimalPlaceOfFloat(pointsPossible) : 1
-
   // this effect scrolls to current week of assignments if it exists
   useEffect(() => {
     if (!shouldScrollToCurrentWeek.current && previousWeekRow.current) {
@@ -221,6 +212,10 @@ function AssignmentTable (props) {
 
   const matchesAssignmentGroupFilter = (assignment, groupArray) => {
     return groupArray.length === 0 || groupArray.indexOf(assignment.assignmentGroup.name) >= 0
+  }
+
+  const handleAssignmentGoalChange = (assignmentId, newGoal, oldGoal) => {
+    handleAssignmentGoalGrade(assignmentId, newGoal, oldGoal)
   }
 
   // Update filteredAssignments when any of the filters change
@@ -410,25 +405,14 @@ function AssignmentTable (props) {
                             a.graded || a.outOf === 0
                               ? <div className={classes.possiblePointsText}>{a.outOf === 0 ? '0' : `${a.currentUserSubmission.score}`}</div>
                               : (
-                                <StyledTextField
-                                  error={(a.goalGrade / a.pointsPossible) > 1}
-                                  disabled={!courseGoalGradeSet}
-                                  id='standard-number'
-                                  value={roundToXDecimals(a.goalGrade, placeToRoundTo(a.pointsPossible))}
-                                  label={
-                                    !courseGoalGradeSet ? 'Set a goal'
-                                      : (a.goalGrade / a.pointsPossible) > 1
-                                        ? 'Over 100%'
-                                        : 'Set a goal'
-                                  }
-                                  onChange={event => {
-                                    const assignmentGoalGrade = event.target.value
-                                    handleAssignmentGoalGrade(a.id, assignmentGoalGrade, a.goalGrade)
-                                  }}
-                                  type='number'
-                                  className={classes.goalGradeInput}
-                                  onFocus={() => handleInputFocus(a.id)}
-                                  onBlur={() => handleInputBlur(a.id)}
+                                <AssignmentGoalInput
+                                  id={a.id}
+                                  goalGrade={a.goalGrade}
+                                  pointsPossible={a.pointsPossible === '' ? null : a.pointsPossible}
+                                  handleGoalChange={handleAssignmentGoalChange}
+                                  enabled={courseGoalGradeSet}
+                                  handleInputFocus={() => handleInputFocus(a.id)}
+                                  handleInputBlur={() => handleInputBlur(a.id)}
                                 />
                               )
                           }

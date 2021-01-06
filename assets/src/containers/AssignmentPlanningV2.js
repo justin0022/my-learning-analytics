@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import AlertBanner from '../components/AlertBanner'
-import AssignmentGoalInput from '../components/AssignmentGoalInput'
+import CourseGoalInput from '../components/CourseGoalInput'
 import AssignmentTable from '../components/AssignmentTable'
 import ProgressBarV2 from '../components/ProgressBarV2'
 import Spinner from '../components/Spinner'
@@ -125,6 +125,7 @@ function AssignmentPlanningV2 (props) {
   })
 
   const handleAssignmentGoalGrade = (key, assignmentGoalGrade, prevGoalGrade) => {
+    console.debug('AssignmentPlanningV2 handleAssignmentGoalGrade')
     const v = {
       assignmentId: key,
       assignGoalGrade: assignmentGoalGrade,
@@ -185,7 +186,7 @@ function AssignmentPlanningV2 (props) {
                       <Grid container alignContent='center' className={classes.section}>
                         <Grid item lg={4} md={5} xs={12}>
                           <Typography variant='h6' gutterBottom>My Minimum Goal (%)</Typography>
-                          <AssignmentGoalInput
+                          <CourseGoalInput
                             currentGrade={currentGrade}
                             goalGrade={goalGrade}
                             maxPossibleGrade={maxPossibleGrade}
@@ -252,7 +253,7 @@ function AssignmentPlanningV2 (props) {
                         </Grid>
                       </Grid>
                       <AssignmentTable
-                        courseGoalGradeSet={goalGrade !== ''}
+                        courseGoalGradeSet={goalGrade !== null}
                         assignments={assignments}
                         assignmentGroups={assignmentGroups}
                         dateStart={data.course.dateStart}

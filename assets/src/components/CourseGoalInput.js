@@ -13,7 +13,7 @@ const styles = ({
   }
 })
 
-function AssignmentGoalInput (props) {
+function CourseGoalInput (props) {
   const {
     currentGrade,
     maxPossibleGrade,
@@ -90,4 +90,4 @@ function AssignmentGoalInput (props) {
   )
 }
 
-export default withStyles(styles)(AssignmentGoalInput)
+export default withStyles(styles)(CourseGoalInput)

@@ -3,7 +3,7 @@ import { sum, roundToXDecimals } from './math'
 
 const clearGoals = assignments => assignments
   .map(a => {
-    a.goalGrade = ''
+    a.goalGrade = null
     a.goalGradeSetByUser = false
     return a
   })
@@ -34,6 +34,7 @@ const setAssignmentGoalGrade = (assignmentId, assignments, goalGrade) => {
     return assignments
   } else {
     const key = assignments.indexOf(assignment[0])
+    console.debug('assignment setAssignmentGoalGrade id:' + assignmentId + ' goalGrade: ' + goalGrade + ' previousGrade: ' + assignments[key].goalGrade)
     return [
       ...assignments.slice(0, key),
       {
@@ -112,7 +113,7 @@ const calculateAssignmentGoalsFromCourseGoal = (
 
   return assignments.map(a => {
     if (notGradedOrGoalGradeSetByUser(a) && a.inputBlur) {
-      a.goalGrade = roundToXDecimals(requiredGrade * a.pointsPossible, 3) || ''
+      a.goalGrade = roundToXDecimals(requiredGrade * a.pointsPossible, 3) || null
     }
     return a
   })
@@ -225,7 +226,7 @@ const createAssignmentFields = (
       a.graded = !!currentUserSubmission && !!currentUserSubmission.gradedDate
       a.submitted = !!currentUserSubmission && !!currentUserSubmission.submittedAt
       a.dueDateMonthDay = dateToMonthDay(localDate)
-      a.goalGrade = ''
+      a.goalGrade = null
       a.goalGradeSetByUser = false
       a.inputFocus = false
       a.inputBlur = true
