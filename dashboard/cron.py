@@ -172,7 +172,8 @@ class DashboardCronJob(CronJobBase):
                          enroll_data as (select id as enroll_id, user_id, type from enrollment_dim where course_id='{data_warehouse_course_id}'
                                          and type in ('StudentEnrollment', 'TaEnrollment', 'TeacherEnrollment') and workflow_state= 'active'),
                          user_info as (select p.unique_name,p.sis_user_id, u.name, u.id as user_id, u.global_canvas_id
-                                        from pseudonym_dim p join user_dim u on u.id = p.user_id where p.sis_user_id is not null),
+                                        from (SELECT ROW_NUMBER() OVER (PARTITION BY user_id order by sis_user_id asc) AS row_number, * FROM pseudonym_dim) as p
+                                        join user_dim u on u.id = p.user_id WHERE row_number = 1),
                          user_enroll as (select u.unique_name, u.sis_user_id, u.name, u.user_id, e.enroll_id,
                                          u.global_canvas_id, e.type from enroll_data e join user_info u on e.user_id= u.user_id),
                          course_fact as (select enrollment_id, current_score, final_score from course_score_fact
@@ -289,10 +290,10 @@ class DashboardCronJob(CronJobBase):
             job_config.query_parameters = query_params
 
             # Location must match that of the dataset(s) referenced in the query.
-            bq_query = bigquery_client.query(final_bq_query, location='US', job_config=job_config)
-
-            resource_access_df: pd.DataFrame = bq_query.to_dataframe()
-            total_bytes_billed += bq_query.total_bytes_billed
+            bq_job = bigquery_client.query(final_bq_query, location='US', job_config=job_config)
+            # This is the call that could result in an exception
+            resource_access_df: pd.DataFrame = bq_job.result().to_dataframe()
+            total_bytes_billed += bq_job.total_bytes_billed
 
             resource_access_row_count = len(resource_access_df)
             if resource_access_row_count == 0:
@@ -598,8 +599,8 @@ class DashboardCronJob(CronJobBase):
 
         status = ""
 
-        run_start = datetime.now()
-        status += f"Start cron: {str(run_start)}\n"
+        run_start = datetime.now(pytz.UTC)
+        status += f"Start cron: {str(run_start)} UTC\n"
 
         course_verification = self.verify_course_ids()
         invalid_course_id_list = course_verification.invalid_course_ids
@@ -624,6 +625,8 @@ class DashboardCronJob(CronJobBase):
             logger.info("Skipping course-related table updates...")
             status += "Skipped course-related table updates.\n"
         else:
+            # Update the date unless there is an exception
+            exception_in_run = False
             logger.info("** course")
             status += self.update_course(course_verification.course_data)
 
@@ -642,7 +645,9 @@ class DashboardCronJob(CronJobBase):
                     status += self.update_with_bq_access()
                     status += self.update_canvas_resource()
                 except Exception as e:
-                    logger.exception("Exception running BigQuery update")
+                    logger.error(f"Exception running BigQuery update: {str(e)}")
+                    status += str(e)
+                    exception_in_run = True
 
         if settings.DATA_WAREHOUSE_IS_UNIZIN:
             logger.info("** informational")
@@ -654,7 +659,11 @@ class DashboardCronJob(CronJobBase):
             logger.warning(f'No data was pulled for these courses.')
         
         # Set all of the courses to have been updated now (this is the same set update_course runs on)
-        Course.objects.filter(id__in=self.valid_locked_course_ids).update(data_last_updated=datetime.now(pytz.UTC))
+        if not exception_in_run:
+            logger.info(f"Updating all valid courses from when this run was started at {run_start}")
+            Course.objects.filter(id__in=self.valid_locked_course_ids).update(data_last_updated=run_start)
+        else:
+            logger.warn("data_last_updated not updated because of an Exception during this run")
 
         status += "End cron: " +  str(datetime.now()) + "\n"
 
