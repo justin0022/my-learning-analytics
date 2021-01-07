@@ -1,11 +1,9 @@
-import React, { useEffect, /* useState, */ useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
-// import PropTypes from 'prop-types'
 import StyledTextField from '../StyledTextField'
 import { roundToXDecimals, getDecimalPlaceOfFloat } from '../../util/math'
-// import { calculateAssignmentGoalsFromCourseGoal } from '../../util/assignment'
-// import debounce from 'lodash.debounce'
+import debounce from 'lodash.debounce'
 
 const styles = theme => ({
   goalGradeInput: {
@@ -23,7 +21,6 @@ function AssignmentGoalInput (props) {
     pointsPossible,
     enabled,
     handleGoalChange,
-    // handleAssignmentGoalGrade,
     handleInputFocus,
     handleInputBlur,
     gradeKey
@@ -34,32 +31,26 @@ function AssignmentGoalInput (props) {
     ? getDecimalPlaceOfFloat(pointsPossible) : 1
 
   const previousGrade = useRef(goalGrade)
-  // const [goalGradeInternal, setGoalGradeInternal] = useState(roundToXDecimals(assignment.goalGrade, placeToRoundTo(assignment.pointsPossible)))
-  // const debouncedGoalGrade = useRef(debounce(grade => {
-  //   handleAssignmentGoalGrade(gradeKey, grade, previousGrade.current)
-  //   previousGrade.current = grade
-  // }, 500)).current
+  const [goalGradeinternal, setGoalGradeInternal] = useState(goalGrade??'')
+
+  const debounceGoalChange = useRef(debounce(grade => {
+    handleGoalChange(id, grade, previousGrade.current)
+  }, 1000)).current
 
   useEffect(() => {
     previousGrade.current = goalGrade
   }, [goalGrade])
 
-  // const updateGoalGradeInternal = (grade) => {
-  //   const roundedGrade = roundToXDecimals(grade, placeToRoundTo(assignment.pointsPossible))
-  //   debouncedGoalGrade(roundedGrade)
-  //   setGoalGradeInternal(roundedGrade)
-  // }
-
-  // useEffect(() => {
-  //   setGoalGradeInternal(assignment.goalGrade)
-  // }, [assignment.goalGrade])
+  useEffect(() => {
+    setGoalGradeInternal(roundToXDecimals(goalGrade, placeToRoundTo(pointsPossible)))
+  }, [goalGrade])
 
   return (
     <StyledTextField
       error={(goalGrade / pointsPossible) > 1}
       disabled={!enabled}
       id='standard-number'
-      value={roundToXDecimals(goalGrade, placeToRoundTo(pointsPossible))}
+      value={goalGradeinternal}
       label={
         enabled ? 'Set a goal'
           : (goalGrade / pointsPossible) > 1
@@ -68,9 +59,8 @@ function AssignmentGoalInput (props) {
       }
       onChange={event => {
         const assignmentGoalGrade = event.target.value
-        handleGoalChange(id, assignmentGoalGrade, -1)
-        // handleAssignmentGoalGrade(id, assignmentGoalGrade, -1)
-        // updateGoalGradeInternal(assignmentGoalGrade)
+        setGoalGradeInternal(assignmentGoalGrade)
+        debounceGoalChange(assignmentGoalGrade)
       }}
       type='number'
       className={classes.goalGradeInput}
@@ -82,7 +72,7 @@ function AssignmentGoalInput (props) {
 
 AssignmentGoalInput.propTypes = {
   id: PropTypes.string.isRequired,
-  goalGrade: PropTypes.number,
+  goalGrade: PropTypes.oneOfType([ PropTypes.number, PropTypes.string]),
   pointsPossible: PropTypes.number // seems like it should be required
 }
 
