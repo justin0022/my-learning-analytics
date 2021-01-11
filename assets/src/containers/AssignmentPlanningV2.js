@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
@@ -94,6 +94,14 @@ function AssignmentPlanningV2 (props) {
     setUserSetting
   })
 
+  useEffect(() => {
+    console.log('---AssignmentPlanningV2 assignments changed---')
+    if (assignments && assignments.length > 0) {
+      const a = assignments[0]
+      console.log('--- assignment[0] goalGrade:' + (a.goalGrade ?? 'null') + '  goalGradeSetByUser:' + a.goalGradeSetByUser)
+    }
+  }, [assignments])
+
   useUserAssignmentSetting({
     loading,
     error,
@@ -133,6 +141,11 @@ function AssignmentPlanningV2 (props) {
     }
     setEventLog(eventLogExtra(v, eventLog, currentGrade, maxPossibleGrade))
     setSettingChanged(true)
+    console.log('--AssignmentPlanningV2 SET ASSIGNMENTS: handleAssignmentGoalGrade---')
+    if (assignments && assignments.length > 0) {
+      const a = assignments[0]
+      console.log('---* assignment[0] goalGrade:' + (a.goalGrade ?? 'null') + '  goalGradeSetByUser:' + a.goalGradeSetByUser)
+    }
     setAssignments(
       setAssignmentGoalGrade(key, assignments, assignmentGoalGrade)
     )
@@ -141,27 +154,32 @@ function AssignmentPlanningV2 (props) {
   const handleClearGoalGrades = () => {
     const v = { courseGoalGrade: '', prevCourseGoalGrade: goalGrade }
     setEventLog(eventLogExtra(v, eventLog, currentGrade, maxPossibleGrade))
+    console.log('--AssignmentPlanningV2 SET ASSIGNMENTSs: handleClearGoalGrades---')
     setAssignments(clearGoals(assignments))
     setGoalGrade('')
     setSettingChanged(true)
   }
 
   const handleAssignmentLock = (key, checkboxState) => {
+    console.log('handleAssignmentLock ' + key)
     const assignment = assignments.filter(a => a.id === key)
     const v = { assignmentId: key, assignGoalGrade: roundToXDecimals(assignment[0].goalGrade, 1), checkboxLockState: checkboxState }
     setEventLog(eventLogExtra(v, eventLog, currentGrade, maxPossibleGrade))
+    console.log('--AssignmentPlanningV2 SET ASSIGNMENTSs: handleAssignmentLock---')
     setAssignments(
       setAssignmentGoalLockState(key, assignments, checkboxState)
     )
   }
 
   const handleInputFocus = key => {
+    console.log('--AssignmentPlanningV2 SET ASSIGNMENTSs: handleInputFocus---')
     setAssignments(
       setAssigmentGoalInputState(key, assignments, true)
     )
   }
 
   const handleInputBlur = key => {
+    console.log('--AssignmentPlanningV2 SET ASSIGNMENTSs: handleInputBlur---')
     setAssignments(
       setAssigmentGoalInputState(key, assignments, false)
     )
@@ -253,7 +271,7 @@ function AssignmentPlanningV2 (props) {
                         </Grid>
                       </Grid>
                       <AssignmentTable
-                        courseGoalGradeSet={goalGrade !== null}
+                        courseGoalGradeSet={goalGrade !== ''}
                         assignments={assignments}
                         assignmentGroups={assignmentGroups}
                         dateStart={data.course.dateStart}
