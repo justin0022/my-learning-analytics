@@ -64,8 +64,8 @@ function AssignmentGoalInput (props) {
       }}
       type='number'
       className={classes.goalGradeInput}
-      onFocus={() => handleInputFocus(gradeKey)}
-      onBlur={() => handleInputBlur(gradeKey)}
+      // onFocus={() => handleInputFocus(gradeKey)}
+      // onBlur={() => handleInputBlur(gradeKey)}
     />
   )
 }
