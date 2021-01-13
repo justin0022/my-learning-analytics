@@ -110,6 +110,8 @@ function AssignmentTable (props) {
     handleInputBlur
   } = props
 
+  console.log(assignments)
+
   const assignmentStatusNames = Object.values(assignmentStatus)
 
   /*
@@ -412,8 +414,8 @@ function AssignmentTable (props) {
                                   pointsPossible={a.pointsPossible === '' ? null : a.pointsPossible}
                                   handleGoalChange={handleAssignmentGoalChange}
                                   enabled={courseGoalGradeSet}
-                                  handleInputFocus={() => handleInputFocus(a.id)}
-                                  handleInputBlur={() => handleInputBlur(a.id)}
+                                  // handleInputFocus={() => handleInputFocus(a.id)}
+                                  // handleInputBlur={() => handleInputBlur(a.id)}
                                 />
                               )
                           }
@@ -438,11 +440,11 @@ function AssignmentTable (props) {
                                   ? [{ color: 'green', value: a.goalGrade, draggable: true }]
                                   : []
                               }
-                              description={`This assignment is worth ${a.percentOfFinalGrade}% of your grade.  
+                              description={`This assignment is worth ${a.percentOfFinalGrade}% of your grade.
                               Points possible: ${a.pointsPossible}.
-                              Your goal: ${(a.goalGrade ? a.goalGrade : 'None')}.  
-                              Your grade: ${(a.grade ? a.grade : 'Not graded')}.  
-                              Class average: ${a.averageGrade}.  
+                              Your goal: ${(a.goalGrade ? a.goalGrade : 'None')}.
+                              Your grade: ${(a.grade ? a.grade : 'Not graded')}.
+                              Class average: ${a.averageGrade}.
                               Rules: ${(a.rules ? a.rules : 'There are no rules for this assignment')}.  `}
                               onBarFocus={el => setPopoverEl(key, el)}
                               onBarBlur={clearPopoverEl}

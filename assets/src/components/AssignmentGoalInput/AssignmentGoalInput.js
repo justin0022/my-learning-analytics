@@ -20,10 +20,7 @@ function AssignmentGoalInput (props) {
     goalGrade,
     pointsPossible,
     enabled,
-    handleGoalChange,
-    handleInputFocus,
-    handleInputBlur,
-    gradeKey
+    handleGoalChange
   } = props
 
   // Use decimal place of pointsPossible if it's a decimal; otherwise, round to nearest tenth
@@ -31,9 +28,10 @@ function AssignmentGoalInput (props) {
     ? getDecimalPlaceOfFloat(pointsPossible) : 1
 
   const previousGrade = useRef(goalGrade)
-  const [goalGradeinternal, setGoalGradeInternal] = useState(goalGrade??'')
+  const [goalGradeinternal, setGoalGradeInternal] = useState(goalGrade || '')
 
   const debounceGoalChange = useRef(debounce(grade => {
+    console.log(previousGrade, grade)
     handleGoalChange(id, grade, previousGrade.current)
   }, 1000)).current
 
@@ -41,9 +39,6 @@ function AssignmentGoalInput (props) {
     previousGrade.current = goalGrade
   }, [goalGrade])
 
-  useEffect(() => {
-    setGoalGradeInternal(roundToXDecimals(goalGrade, placeToRoundTo(pointsPossible)))
-  }, [goalGrade])
 
   return (
     <StyledTextField
