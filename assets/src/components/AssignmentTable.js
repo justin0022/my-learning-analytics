@@ -105,12 +105,8 @@ function AssignmentTable (props) {
     assignmentGroups,
     dateStart,
     handleAssignmentGoalGrade,
-    handleAssignmentLock,
-    handleInputFocus,
-    handleInputBlur
+    handleAssignmentLock
   } = props
-
-  console.log(assignments)
 
   const assignmentStatusNames = Object.values(assignmentStatus)
 
@@ -215,10 +211,6 @@ function AssignmentTable (props) {
 
   const matchesAssignmentGroupFilter = (assignment, groupArray) => {
     return groupArray.length === 0 || groupArray.indexOf(assignment.assignmentGroup.name) >= 0
-  }
-
-  const handleAssignmentGoalChange = (assignmentId, newGoal, oldGoal) => {
-    handleAssignmentGoalGrade(assignmentId, newGoal, oldGoal)
   }
 
   // Update filteredAssignments when any of the filters change
@@ -412,10 +404,8 @@ function AssignmentTable (props) {
                                   id={a.id}
                                   goalGrade={a.goalGrade}
                                   pointsPossible={a.pointsPossible === '' ? null : a.pointsPossible}
-                                  handleGoalChange={handleAssignmentGoalChange}
+                                  handleGoalChange={handleAssignmentGoalGrade}
                                   enabled={courseGoalGradeSet}
-                                  // handleInputFocus={() => handleInputFocus(a.id)}
-                                  // handleInputBlur={() => handleInputBlur(a.id)}
                                 />
                               )
                           }
