@@ -30,6 +30,13 @@ const isOutOfRange = (data, checkPointData) => {
 
 const sum = arr => arr.reduce((acc, cur) => (acc += cur), 0)
 
+const roundGrade = (grade, pointsPossible) => roundToXDecimals(
+  grade,
+  (String(pointsPossible).includes('.'))
+    ? getDecimalPlaceOfFloat(pointsPossible)
+    : 1
+)
+
 export {
   average,
   getDecimalPlaceOfFloat,
@@ -37,5 +44,6 @@ export {
   roundToXDecimals,
   sum,
   isInRange,
-  isOutOfRange
+  isOutOfRange,
+  roundGrade
 }

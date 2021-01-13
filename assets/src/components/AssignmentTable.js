@@ -105,9 +105,7 @@ function AssignmentTable (props) {
     assignmentGroups,
     dateStart,
     handleAssignmentGoalGrade,
-    handleAssignmentLock,
-    handleInputFocus,
-    handleInputBlur
+    handleAssignmentLock
   } = props
 
   const assignmentStatusNames = Object.values(assignmentStatus)
@@ -213,10 +211,6 @@ function AssignmentTable (props) {
 
   const matchesAssignmentGroupFilter = (assignment, groupArray) => {
     return groupArray.length === 0 || groupArray.indexOf(assignment.assignmentGroup.name) >= 0
-  }
-
-  const handleAssignmentGoalChange = (assignmentId, newGoal, oldGoal) => {
-    handleAssignmentGoalGrade(assignmentId, newGoal, oldGoal)
   }
 
   // Update filteredAssignments when any of the filters change
@@ -410,10 +404,8 @@ function AssignmentTable (props) {
                                   id={a.id}
                                   goalGrade={a.goalGrade}
                                   pointsPossible={a.pointsPossible === '' ? null : a.pointsPossible}
-                                  handleGoalChange={handleAssignmentGoalChange}
+                                  handleGoalChange={handleAssignmentGoalGrade}
                                   enabled={courseGoalGradeSet}
-                                  handleInputFocus={() => handleInputFocus(a.id)}
-                                  handleInputBlur={() => handleInputBlur(a.id)}
                                 />
                               )
                           }
@@ -438,11 +430,11 @@ function AssignmentTable (props) {
                                   ? [{ color: 'green', value: a.goalGrade, draggable: true }]
                                   : []
                               }
-                              description={`This assignment is worth ${a.percentOfFinalGrade}% of your grade.  
+                              description={`This assignment is worth ${a.percentOfFinalGrade}% of your grade.
                               Points possible: ${a.pointsPossible}.
-                              Your goal: ${(a.goalGrade ? a.goalGrade : 'None')}.  
-                              Your grade: ${(a.grade ? a.grade : 'Not graded')}.  
-                              Class average: ${a.averageGrade}.  
+                              Your goal: ${(a.goalGrade ? a.goalGrade : 'None')}.
+                              Your grade: ${(a.grade ? a.grade : 'Not graded')}.
+                              Class average: ${a.averageGrade}.
                               Rules: ${(a.rules ? a.rules : 'There are no rules for this assignment')}.  `}
                               onBarFocus={el => setPopoverEl(key, el)}
                               onBarBlur={clearPopoverEl}
