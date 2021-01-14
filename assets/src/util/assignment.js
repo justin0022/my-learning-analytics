@@ -34,7 +34,6 @@ const setAssignmentGoalGrade = (assignmentId, assignments, goalGrade) => {
     return assignments
   } else {
     const key = assignments.indexOf(assignment[0])
-    console.debug('assignment setAssignmentGoalGrade id:' + assignmentId + ' goalGrade: ' + goalGrade + ' previousGrade: ' + assignments[key].goalGrade)
     return [
       ...assignments.slice(0, key),
       {

@@ -28,7 +28,7 @@ function AssignmentGoalInput (props) {
 
   const debounceGoalChange = debounce(grade => {
     handleGoalChange(id, grade, previousGrade.current)
-  }, 1000)
+  }, 500)
 
   useEffect(() => {
     previousGrade.current = goalGrade
