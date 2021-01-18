@@ -125,6 +125,7 @@ function AssignmentPlanningV2 (props) {
   })
 
   const handleAssignmentGoalGrade = (key, assignmentGoalGrade, prevGoalGrade) => {
+    console.log('AssignmentPlanningV2 handleAssignmentGoalGrade')
     const v = {
       assignmentId: key,
       assignGoalGrade: assignmentGoalGrade,
